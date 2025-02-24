@@ -21,6 +21,8 @@ class QuizGame {
     this.score = 0;
     this.quizContainer = document.getElementById("quiz-container");
     this.restartBtn = document.getElementById("restart-btn");
+    this.progressFill = document.getElementById("progress-fill");
+    this.progressText = document.getElementById("progress-text");
     this.restartBtn.addEventListener("click", () => this.restart());
   }
 
@@ -64,6 +66,12 @@ class QuizGame {
     });
   }
 
+  updateProgressBar() {
+    const progressPercentage = (this.currentQuestionIndex / this.numQuestions) * 100;
+    this.progressFill.style.width = `${progressPercentage}%`;
+    this.progressText.textContent = `Question ${this.currentQuestionIndex}/${this.numQuestions}`;
+  }
+
   showQuestion() {
     // If all questions are answered, show the results/review page.
     if (this.currentQuestionIndex >= this.numQuestions) {
@@ -71,6 +79,7 @@ class QuizGame {
       return;
     }
     
+    this.updateProgressBar();
     this.quizContainer.innerHTML = ""; // clear previous content
     const q = this.questions[this.currentQuestionIndex];
 
@@ -130,8 +139,27 @@ class QuizGame {
 
   handleAnswer(selectedOption) {
     const q = this.questions[this.currentQuestionIndex];
+    const card = document.querySelector(".card");
+    const optionBtns = document.querySelectorAll(".option-btn");
+    
+    // Disable all buttons to prevent multiple selections
+    optionBtns.forEach(btn => {
+      btn.disabled = true;
+      
+      // Highlight correct answer
+      if (btn.textContent === q.correctAnswer) {
+        btn.classList.add("correct-option");
+      }
+      
+      // Highlight selected wrong answer
+      if (btn.textContent === selectedOption && selectedOption !== q.correctAnswer) {
+        btn.classList.add("wrong-option");
+      }
+    });
+    
     if (selectedOption === q.correctAnswer) {
       this.score++;
+      card.classList.add("correct-card");
     } else {
       // Record mistake with the word prompt and chosen definition
       this.mistakes.push({
@@ -141,19 +169,68 @@ class QuizGame {
         correct: q.correctAnswer,
         definition: q.correctAnswer // For clarity in review (the definition)
       });
+      card.classList.add("wrong-card");
     }
-    this.currentQuestionIndex++;
-    this.showQuestion();
+    
+    // Show next button
+    const nextBtn = document.createElement("button");
+    nextBtn.classList.add("next-btn");
+    nextBtn.textContent = "Next Question";
+    nextBtn.addEventListener("click", () => {
+      this.currentQuestionIndex++;
+      this.showQuestion();
+    });
+    card.appendChild(nextBtn);
+    
+    // Update progress text
+    this.progressText.textContent = `Question ${this.currentQuestionIndex + 1}/${this.numQuestions}`;
   }
 
   showResults() {
+    this.progressFill.style.width = "100%";
+    this.progressText.textContent = `Quiz Complete`;
+    
     this.quizContainer.innerHTML = "";
     const resultsDiv = document.createElement("div");
     resultsDiv.classList.add("results");
 
-    const scoreEl = document.createElement("h2");
-    scoreEl.textContent = `Score: ${this.score} / ${this.numQuestions} (${((this.score / this.numQuestions) * 100).toFixed(1)}%)`;
-    resultsDiv.appendChild(scoreEl);
+    // Create score display with animation
+    const scoreContainer = document.createElement("div");
+    scoreContainer.classList.add("score-container");
+    
+    const scoreCircle = document.createElement("div");
+    scoreCircle.classList.add("score-circle");
+    
+    const percentage = Math.round((this.score / this.numQuestions) * 100);
+    scoreCircle.innerHTML = `
+      <div class="percentage">${percentage}%</div>
+      <div class="score-text">${this.score} / ${this.numQuestions}</div>
+    `;
+    
+    // Set circle fill based on score percentage
+    scoreCircle.style.background = `conic-gradient(
+      #27ae60 0% ${percentage}%, 
+      #f3f3f3 ${percentage}% 100%
+    )`;
+    
+    scoreContainer.appendChild(scoreCircle);
+    resultsDiv.appendChild(scoreContainer);
+    
+    // Add motivational message based on score
+    const message = document.createElement("p");
+    message.classList.add("result-message");
+    
+    if (percentage >= 90) {
+      message.textContent = "Excellent! Your vocabulary is outstanding!";
+    } else if (percentage >= 70) {
+      message.textContent = "Great job! You have a strong vocabulary!";
+    } else if (percentage >= 50) {
+      message.textContent = "Good effort! Keep practicing to improve your vocabulary.";
+    } else {
+      message.textContent = "Keep studying! Review the words in the dictionary to improve your score.";
+    }
+    
+    resultsDiv.appendChild(message);
 
     if (this.mistakes.length > 0) {
       const reviewTitle = document.createElement("h3");
@@ -182,7 +259,15 @@ class QuizGame {
 
         resultsDiv.appendChild(reviewBlock);
       });
+      
+      // Add a link to dictionary for further study
+      const dictionaryLink = document.createElement("a");
+      dictionaryLink.href = "dictionary.html";
+      dictionaryLink.classList.add("dictionary-link");
+      dictionaryLink.textContent = "Study All Words in Dictionary";
+      resultsDiv.appendChild(dictionaryLink);
     }
+    
     this.quizContainer.appendChild(resultsDiv);
     this.restartBtn.style.display = "inline-block";
   }

@@ -10,16 +10,34 @@
   <header>
     <h1>SAT Words Guessr</h1>
     <p>Guess the correct definition for each SAT word!</p>
+    <nav>
+      <ul>
+        <li><a href="index.html" class="active">Quiz</a></li>
+        <li><a href="dictionary.html">Dictionary</a></li>
+      </ul>
+    </nav>
   </header>
+  
   <main>
+    <div class="progress-container">
+      <div id="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+      <div id="progress-text">Question 0/20</div>
+    </div>
+    
     <div id="quiz-container"></div>
+    
     <div id="controls">
       <button id="restart-btn">Restart Quiz</button>
+      <a href="dictionary.html" class="dictionary-btn">View Dictionary</a>
     </div>
   </main>
+  
   <footer>
     <p>&copy; 2025 SAT Words Guessr Made By Umut Şahin</p>
   </footer>
+  
   <script src="app.js"></script>
 </body>
 </html>

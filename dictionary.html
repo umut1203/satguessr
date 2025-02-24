@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SAT Words Guessr - Dictionary</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dictionary.css">
+</head>
+<body>
+  <header>
+    <h1>SAT Words Guessr</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Quiz</a></li>
+        <li><a href="dictionary.html" class="active">Dictionary</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    <div class="dictionary-container">
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search words or definitions...">
+        <button id="search-btn">Search</button>
+        <button id="clear-btn">Clear</button>
+      </div>
+      
+      <div class="alphabet-nav">
+        <ul id="alphabet-list">
+          <!-- Will be populated with JavaScript -->
+        </ul>
+      </div>
+      
+      <div id="dictionary-content">
+        <!-- Will be populated with JavaScript -->
+      </div>
+    </div>
+  </main>
+  
+  <div id="word-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 id="modal-word"></h2>
+      <p id="modal-pos" class="pos"></p>
+      <p id="modal-definition"></p>
+      <div id="modal-examples">
+        <h3>Examples:</h3>
+        <ul id="examples-list"></ul>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>&copy; 2025 SAT Words Guessr Made By Umut Şahin</p>
+  </footer>
+  
+  <script src="dictionary.js"></script>
+</body>
+</html>
